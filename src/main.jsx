@@ -4,12 +4,15 @@ import App from './App.jsx'
 import './index.css'
 import './App.css'
 import {BrowserRouter} from 'react-router-dom'
+import { SnackbarProvider } from 'notistack' 
 
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
+    <SnackbarProvider>
     <App />
+    </SnackbarProvider>
     </BrowserRouter>
   </React.StrictMode>,
 )
