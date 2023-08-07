@@ -1,15 +1,16 @@
 import { TextField, Button } from "@mui/material";
-import React, {useRef} from "react";
+import React, {useRef, useState} from "react";
 import alert from "../utility/alert";
 
 const RegisterPage = () => {
+  const [redirect, setRedirect] = useState(false);
   const name=useRef();
   const phone=useRef();
   const email=useRef();
   const username=useRef();
   const password=useRef();
 
-  const handleSubmit = (ev) => {
+  const handleSubmit = async (ev) => {
     ev.preventDefault();
 
     const nameVal = name.current.value;
@@ -18,35 +19,30 @@ const RegisterPage = () => {
     const usernameVal = username.current.value;
     const passwordVal = password.current.value;
 
-
-    //character use in input text
-    const mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-    const usernameFormat = /^[A-Za-z][A-Za-z0-9_]{1,29}$/
-    const passwordFormat = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    //1.
-    if(nameVal.length<2 || name.length>20){
-      alert('name should be in range (2 - 20')
-      return;
+    const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/v1/auth/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    body : JSON.stringify({
+      name: nameVal,
+      phone: phoneVal,
+      email: emailVal, 
+      username: usernameVal, 
+      password: passwordVal 
+      })
+    })
+    const data = await response.json();
+    console.log(response);
+    if(response.ok) {
+      alert('User Registered', 'Success')
+      setRedirect(true)
+    } else {
+      alert(data.error, 'error')
     }
-    if (!mailformat.test(emailVal)) {
-      alert('Invalid email', 'error')
-      return
-    }
-    if(phoneVal < 9999999999){
-      alert('Invalid Phonenumber');
-      return;
-    }
-    if (usernameVal.length < 3 || usernameVal.length > 30) {
-      alert('Username should be greater than 2 and less than equals 30 characters', 'error')
-      return;
-    }
-    if (!usernameFormat.test(usernameVal)) {
-      alert('Invalid username! first character should be alphabet [A-Za-z] and other characters can be alphabets, numbers or an underscore so, [A-Za-z0-9_].', 'error')
-    }
-    if (!passwordFormat.test(passwordVal)) {
-      alert('password should have minimum of eight characters, at least one uppercase letter, one lowercase letter, one number and one special character:', 'error')
-      return
-    }
+  };
+  if(redirect) {
+    return <Navigate to={'login'}/>
   }
   return (
     <div className="register-page">
@@ -60,6 +56,7 @@ const RegisterPage = () => {
             variant="filled"
             inputRef={name}
             required
+            autoComplete='true'
           />
           <TextField fullWidth
             id="filled-basic"
@@ -67,6 +64,7 @@ const RegisterPage = () => {
             variant="filled"
             inputRef={phone}
             required
+            autoComplete='true'
           />
           <TextField fullWidth
            id="filled-basic"
@@ -74,6 +72,7 @@ const RegisterPage = () => {
             variant="filled"
             inputRef={email}
             required
+            autoComplete='true'
           />
           <TextField fullWidth
            id="filled-basic"
@@ -81,6 +80,7 @@ const RegisterPage = () => {
             variant="filled"
             inputRef={username}
             required
+            autoComplete='true'
            />
           <TextField fullWidth
            id="filled-basic"
@@ -88,8 +88,13 @@ const RegisterPage = () => {
            variant="filled"
            inputRef={password}
            required
+           autoComplete='true'
           />
-          <Button variant="contained" sx={{marginTop: '20px'}}  type='submit'>Sign Up</Button>
+          <Button variant="contained" 
+          sx={{marginTop: '20px', width:"100%"}}  
+          type='submit'>
+            Sign Up
+            </Button>
         </form>
         </div>
       </div>
