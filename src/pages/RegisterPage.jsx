@@ -1,4 +1,5 @@
 import { TextField, Button } from "@mui/material";
+import { Navigate } from "react-router-dom";
 import React, {useRef, useState} from "react";
 import alert from "../utility/alert";
 
@@ -42,7 +43,7 @@ const RegisterPage = () => {
     }
   };
   if(redirect) {
-    return <Navigate to={'login'}/>
+    return <Navigate to={'/login'}/>
   }
   return (
     <div className="register-page">
